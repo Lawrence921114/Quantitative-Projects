@@ -1,37 +1,30 @@
-<pre>
 ```mermaid
 flowchart TB
-  %% Inputs
-  x[|excess_t| (magnitude)]
-  wr[WR_t (Williams%R)]
-  z[z-score of CBP_excess]
+  X["abs(excess_t) magnitude"]
+  WR["WR_t (Williams %R)"]
+  Z["z-score of CBP_excess"]
 
-  %% Gates
   subgraph Gates
-    Gband[G_band(t) = 1 if τ_LOW ≤ |excess_t| ≤ τ_HIGH]
-    Gwr[G_wr(t) = 1 if WR_LOW < WR_t < WR_HIGH]
-    G[G(t) = G_band(t) * G_wr(t)]
+    Gband["band gate: tau_LOW <= abs(excess_t) <= tau_HIGH"]
+    Gwr["wr gate: WR_LOW < WR_t < WR_HIGH"]
+    G["G = Gband * Gwr"]
   end
 
-  %% Effective signal
-  zeff[z^{eff}_t = z_t if G(t)=1 else 0]
+  Zeff["z_eff = z-score if G = 1 else 0"]
 
-  %% Mode selection
-  subgraph ModeSelection
-    long[LONG_AGGRESSIVE if z^{eff}_t > 0.5]
-    neutral[NEUTRAL if |z^{eff}_t| ≤ 0.5]
-    short[SHORT_DEFENSIVE if z^{eff}_t < −0.5]
+  subgraph Mode
+    Long["LONG_AGG: z_eff > 0.5"]
+    Neutral["NEUTRAL: abs(z_eff) <= 0.5"]
+    Short["SHORT_DEF: z_eff < -0.5"]
   end
 
-  %% Edges
-  x --> Gband
-  wr --> Gwr
-  z --> zeff
+  X --> Gband
+  WR --> Gwr
+  Z --> Zeff
   Gband --> G
   Gwr --> G
-  G --> zeff
-  zeff --> long
-  zeff --> neutral
-  zeff --> short
+  G --> Zeff
+  Zeff --> Long
+  Zeff --> Neutral
+  Zeff --> Short
 ```
-</pre>
