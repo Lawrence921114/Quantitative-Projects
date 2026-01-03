@@ -1,33 +1,36 @@
 # Personal Research
+
 ```mermaid
 flowchart TD
-  A[Start] --> B[Load price data<br/>(BTC, ETH, BNB, ADA, XRP)]
+  A([Start]) --> B[Load price data]
   B --> C[Compute log returns]
-  C --> D[Rolling window at time t]
+  C --> D[Rolling window]
 
-  D --> E[Estimate expected returns μ_t<br/>(rolling mean / chosen estimator)]
-  D --> F[Estimate covariance Σ_t<br/>(shrinkage / stabilization)]
+  D --> E[Estimate expected returns]
+  D --> F[Estimate covariance\nwith shrinkage]
 
-  E --> G[Markowitz target weights w*_t<br/>argmin risk - λ return]
+  E --> G[Compute Markowitz target weights]
   F --> G
 
-  G --> H[Constraints handling<br/>Long-only + fully-invested]
-  H --> I[Project to simplex<br/>(w*_t feasible)]
+  G --> H[Apply constraints\nlong-only, fully invested]
+  H --> I[Simplex projection\nmake weights feasible]
 
-  I --> J[LQR Rebalancing Controller]
-  J --> K[State: current weights w_t]
-  J --> L[Control: trade u_t = Δw_t]
-  K --> M[Linear dynamics<br/>w_{t+1} = w_t + u_t (conceptually)]
+  I --> J[LQR rebalancing]
+  J --> K[State: current weights]
+  J --> L[Control: trade vector]
+
+  K --> M[Next weights = current + trade]
   L --> M
 
-  I --> N[Deviation signal: (w_t - w*_t)]
-  N --> O[Riccati / DARE solve<br/>to get feedback gain K_t]
-  O --> P[Feedback policy<br/>u_t = -K_t · (w_t - w*_t)]
+  I --> N[Deviation from target]
+  N --> O[Riccati / DARE\ncompute feedback gain]
+  O --> P[Trade = - gain * deviation]
 
-  P --> Q[Apply transaction costs<br/>cost ∝ |Δw_t|]
-  Q --> R[Portfolio wealth update<br/>with realized next-period returns]
-  R --> S[Iterate t = t+1]
+  P --> Q[Transaction costs\nproportional to turnover]
+  Q --> R[Wealth update]
+  R --> S[Repeat]
+
+  S --> T[Performance report]
+  T --> U[Equity curve and metrics]
+  U --> V([End])
 ```
-  S -->|until end| T[Performance evaluation]
-  T --> U[Equity curve + metrics<br/>(return, volatility, Sharpe, turnover)]
-  U --> V[End]
